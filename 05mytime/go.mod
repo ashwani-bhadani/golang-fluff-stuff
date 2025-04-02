@@ -1,3 +1,3 @@
-module time
+module mytime
 
 go 1.24.1
