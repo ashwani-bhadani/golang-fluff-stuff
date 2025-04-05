@@ -44,7 +44,11 @@ func main() {
 	fmt.Println(highScore)
 
 	//-----------------how to remove value from slice based on index-----------------------------------//
-	var courses = []string{}
-
+	var courses = []string{"golang", "react.js", "springboot", "java", "javascript"}
+	fmt.Println(courses) //we can use append to add or even remove values
+	var index int = 2
+	courses = append(courses[:index], courses[index+1:]...) //now delete is available
+	//append reallocates the memory, we take portion of slice since index is non-inclusive, it'll be removed
+	fmt.Println(courses)
 
 }
