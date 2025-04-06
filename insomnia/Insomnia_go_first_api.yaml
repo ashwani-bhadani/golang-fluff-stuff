@@ -1,0 +1,146 @@
+type: collection.insomnia.rest/5.0
+name: Golang-first-api
+meta:
+  id: wrk_4977d86b032344e18866c715c452e288
+  created: 1743963307064
+  modified: 1743963307064
+collection:
+  - url: http://localhost:4000/course/42
+    name: fetch course by id
+    meta:
+      id: req_34ad204727d049b3b10b41997600d4a3
+      created: 1743963335651
+      modified: 1743965381761
+      isPrivate: false
+      sortKey: -1743963335651
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:4000/course
+    name: create course
+    meta:
+      id: req_63027d5b4cfc44489795edc584923ff5
+      created: 1743963410035
+      modified: 1743965222618
+      isPrivate: false
+      sortKey: -1743963335601
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"coursename": "JavaScript Vanilla",
+        	"price": 299,
+        	"author": {
+        		"fullname": "LCO",
+        		"website": "github.com/hitesh-chaudhary"
+        	}
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:4000/courses
+    name: fetch all courses
+    meta:
+      id: req_9c78a9894c084c5f81ba4bdd60e97799
+      created: 1743963459180
+      modified: 1743963466201
+      isPrivate: false
+      sortKey: -1743963335626
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:4000/course/23
+    name: remove course by id
+    meta:
+      id: req_e390e72a205a406d9d67f3e9cc396451
+      created: 1743963742059
+      modified: 1743965719904
+      isPrivate: false
+      sortKey: -1743963335638.5
+    method: DELETE
+    headers:
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:4000/course/23
+    name: update course
+    meta:
+      id: req_b8fab3e0b6314709aec2d6391e159133
+      created: 1743965757445
+      modified: 1743965770647
+      isPrivate: false
+      sortKey: -1743963335551
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"coursename": "JavaScript Vanilla",
+        	"price": 299,
+        	"author": {
+        		"fullname": "LCO",
+        		"website": "github.com/hitesh-chaudhary"
+        	}
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_6241602b35de0eb84058daa97fd714bb125ab83a
+    created: 1743963307067
+    modified: 1743963307067
+environments:
+  name: Base Environment
+  meta:
+    id: env_6241602b35de0eb84058daa97fd714bb125ab83a
+    created: 1743963307066
+    modified: 1743963307066
+    isPrivate: false

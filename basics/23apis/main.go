@@ -84,21 +84,44 @@ func createOneCourse(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("create on course")
 	w.Header().Set("Content-Type", "application/json")
 
+	//check if method is post
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	//what if: body is empty
 	if r.Body == nil {
 		json.NewEncoder(w).Encode("Data Empty error: Please send valid data")
 	}
 
-	//what if data is {} as a struct, destructure
+	//what if data is blank {} as a struct, destructure
 	var course Course
-	_ = json.NewDecoder(r.Body).Decode(&course) //passing a ref, don't care about return value
-	if course.IsEmpty() {                       //just craft the response if non-empty now
+	err := json.NewDecoder(r.Body).Decode(&course) //passing a ref, don't care about return value
+	if err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	if course.IsEmpty() { //just craft the response if non-empty now
 		json.NewEncoder(w).Encode("Data Empty error: The JSON is blank/empty")
 		return
 	}
 
 	//check & not add if a course already exists
 	//loop, title matches the course .course name
+	found := false
+	for _, c := range courses {
+		if c.CourseName == course.CourseName {
+			found = true
+			break
+		}
+	}
+
+	if found {
+		http.Error(w, "A course with this name already exists!", http.StatusBadRequest)
+		return
+	}
 
 	//generate a unique id & convert it to string
 	//append course into courses
@@ -150,6 +173,10 @@ func deleteOneCourse(w http.ResponseWriter, r *http.Request) {
 		if course.CourseId == params["id"] {
 			courses = append(courses[:idx], courses[idx+1:]...) //delete item at idx & combine
 			break                                               //as deleted item, can stop loop
+		} else {
+			//if course does not exist with this id
+			http.Error(w, "No course with this id exists!", http.StatusNotFound)
+			return
 		}
 	}
 
@@ -172,8 +199,8 @@ func main() {
 	r.HandleFunc("/courses", getAllCourses).Methods("GET")
 	r.HandleFunc("/course/{id}", getOneCourse).Methods("GET") //if you change id to courseId, then use params["courseId"]
 	r.HandleFunc("/course", createOneCourse).Methods("POST")
-	r.HandleFunc("/course/{id}", createOneCourse).Methods("PUT")
-	r.HandleFunc("/course/{id}", createOneCourse).Methods("DEL")
+	r.HandleFunc("/course/{id}", updateOneCourse).Methods("PUT")
+	r.HandleFunc("/course/{id}", deleteOneCourse).Methods("DELETE")
 
 	//listen to a port, log comes handy & helps
 	log.Fatal(http.ListenAndServe(":4000", r))
