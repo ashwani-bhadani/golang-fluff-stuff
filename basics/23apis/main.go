@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -92,9 +93,12 @@ func createOneCourse(w http.ResponseWriter, r *http.Request) {
 	var course Course
 	_ = json.NewDecoder(r.Body).Decode(&course) //passing a ref, don't care about return value
 	if course.IsEmpty() {                       //just craft the response if non-empty now
-		json.NewEncoder(w).Encode("Data Empty error: The JSON is blanl/empty")
+		json.NewEncoder(w).Encode("Data Empty error: The JSON is blank/empty")
 		return
 	}
+
+	//check & not add if a course already exists
+	//loop, title matches the course .course name
 
 	//generate a unique id & convert it to string
 	//append course into courses
@@ -110,6 +114,67 @@ func createOneCourse(w http.ResponseWriter, r *http.Request) {
 	// return //redundant
 }
 
-func main() {
+func updateOneCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("update one course")
+	w.Header().Set("Content-Type", "application/json")
 
+	//1. grab id from req
+	params := mux.Vars(r)
+
+	//2. stesp: loop, id, remove, add with my id again
+	for idx, course := range courses {
+		if course.CourseId == params["id"] {
+			//removing a value from a slice based on index idx as in slices tutorial
+			courses = append(courses[:idx], courses[idx+1:]...) //combines portions
+			var course Course
+			_ = json.NewDecoder(r.Body).Decode(&course) //decoding json based on struct
+			//we need to generate a id, again
+			course.CourseId = params["id"]
+			courses = append(courses, course) //create new course to return
+			json.NewEncoder(w).Encode(course)
+			return
+		}
+	}
+
+	//TODO: send a response when id not found, or empty {}
+
+}
+
+func deleteOneCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("delete one course")
+	w.Header().Set("Content-Type", "application/json")
+
+	params := mux.Vars(r)
+	//loop, find by id, remove
+	for idx, course := range courses {
+		if course.CourseId == params["id"] {
+			courses = append(courses[:idx], courses[idx+1:]...) //delete item at idx & combine
+			break                                               //as deleted item, can stop loop
+		}
+	}
+
+}
+
+//handling the routes in golang
+
+func main() {
+	fmt.Println("Building APIs with golang!")
+	r := mux.NewRouter()
+
+	//seeding, adding data into courses
+	courses = append(courses, Course{CourseId: "23", CourseName: "React Js", CoursePrice: 499.0, Author: &Author{Fullname: "Ashwani", Website: "github.com"}})
+	courses = append(courses, Course{CourseId: "33", CourseName: "Golang", CoursePrice: 699.0, Author: &Author{Fullname: "Ashwani", Website: "github.com"}})
+	courses = append(courses, Course{CourseId: "43", CourseName: "Java", CoursePrice: 399.0, Author: &Author{Fullname: "Ashwani", Website: "github.com"}})
+	courses = append(courses, Course{CourseId: "53", CourseName: "Spring Boot", CoursePrice: 599.0, Author: &Author{Fullname: "Ashwani", Website: "github.com"}})
+
+	//routing : take the router object & call the handle func, pass on the ref of methods
+	r.HandleFunc("/", serveHome).Methods("GET")
+	r.HandleFunc("/courses", getAllCourses).Methods("GET")
+	r.HandleFunc("/course/{id}", getOneCourse).Methods("GET") //if you change id to courseId, then use params["courseId"]
+	r.HandleFunc("/course", createOneCourse).Methods("POST")
+	r.HandleFunc("/course/{id}", createOneCourse).Methods("PUT")
+	r.HandleFunc("/course/{id}", createOneCourse).Methods("DEL")
+
+	//listen to a port, log comes handy & helps
+	log.Fatal(http.ListenAndServe(":4000", r))
 }
